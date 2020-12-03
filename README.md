@@ -2,7 +2,7 @@
 ---
 // Description 
 
-## Why make an API API. 
+## Why make an API API?
 
 ## Getting started
 
