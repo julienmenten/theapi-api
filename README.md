@@ -6,8 +6,13 @@
 
 ## Getting started
 
-## Having trouble? 
+## How it works
 
 ## Status & Roadmap
 
 ## Author 
+
+## Having trouble? 
+
+## Contributing
+
