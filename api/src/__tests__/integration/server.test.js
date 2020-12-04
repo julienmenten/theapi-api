@@ -1,6 +1,9 @@
 const supertest = require('supertest');
 const app = require('../../server');
 
+const request = supertest(app)
+
+
 describe(' GET /test', ()=> {
     test('responds with 200', async (done) => {
         try {

@@ -25,10 +25,10 @@
     "knex": "^0.21.12",
     "supertest": "^6.0.1"
   },
-  "jest": {​​​​​​​
+  "jest": {
     "testPathIgnorePatterns": [
       "/src/__tests__/integration/",
       "/node_modules/"
     ]
-  }​​​​​​​
+  }
 }
