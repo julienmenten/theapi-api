@@ -1,4 +1,5 @@
 # The great API API
+v0.0.0
 
 The great API API is an API that allows users to find, test and share API's. 
 With The great API, you can find API's for your project in seconds with all the usefull information and endpoints you need for development. 
