@@ -106,6 +106,7 @@ async function initialiseTables() {
         .then(async () => {
           console.log('created table: APIS');
         });
+        
     }
   });
 }
