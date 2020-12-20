@@ -24,13 +24,14 @@ describe('Create and POST a new API in the database, then remove that entry', ()
         }
 
         const response = await request.post('/apis').send(TEST_API)
+        UUID = response.body.id
+       
         expect(response.status).toBe(200, done())
-
     })
 
     test('GET the new entry from the DB', async (done) => {
-        const response = await request.get(`/apis/${UUID}`)
-        expect(resonse.status).toBe(200, done())
+        const response = await request.get(`/apis?id=${UUID}`)
+        expect(response.status).toBe(200, done())
     })
 
     test('UPDATE the name of the entry', async (done) => {

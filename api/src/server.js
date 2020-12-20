@@ -32,17 +32,15 @@ app.get('/apis', async (req, res) => {
 
 
 // FIND ONE API 
-app.get('api/:uuid', async (req, res) => {
-    const uuid = req.params.uuid;
-    console.log(uuid)
-    const result = await pg
-        .select(['uuid', 'api_name', 'created_at'])
-        .from('api')
-        .where({uuid: uuid})
-
-    res.json({
+app.get('/apis?id=', async (req, res) => {
+    const uuid = req.query.uuid;
+    const result = await pg('api')
+        .select('*')
+        .where({uuid: uuid});
+    console.log(result)
+    res.status(200).send(json({
         res: result
-    });
+    }));
 });
 
 
