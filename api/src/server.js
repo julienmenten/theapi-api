@@ -14,13 +14,13 @@ const pg = require('knex')({
 
 
 // GET all API's 
-app.get('/api', (req, res) => {
-    console.log('GET /api')
-    res.status(200).send()
+
+app.get('/apis', (req, res) => {
+   res.status(200).send()
 });
 
 // FIND ONE API 
-app.get('api/:uuid', async (req, res) => {
+app.get('apis/:uuid', async (req, res) => {
 
     const uuid = req.params.uuid;
 
@@ -37,14 +37,18 @@ app.get('api/:uuid', async (req, res) => {
 
 /* POST request for a new API 
         Accepts:
+            API-name: String
             API-link: String
-            Allowed-endpoints: TBD
+            Allowed-endpoints: String[]
+            Description: String
 */
 app.post('/apis' , (req, res) => {
 
     const newAPI = {
-        url: req.body.url,
-        permissions: req.body.permissions
+        api_name: req.body.name,
+        api_url: req.body.url,
+        allowed_endpoints: req.body.permissions,
+        description: req.body.description
     }
 
 
@@ -110,6 +114,8 @@ async function initialiseTables() {
           table.increments();
           table.uuid('uuid');
           table.string('api_name');
+          table.string('api_link');
+          table.string('description');
           table.json('properties')
           table.json('endpoints')
           table.timestamps(true, true);
