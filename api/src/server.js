@@ -8,12 +8,13 @@ const fetch = require('node-fetch')
 const pg = require('knex')({
     client: 'pg',
     version: '9.6',      
+    connection: 'postgres://julien:admin12345@localhost:5432/thegreatapi',
     searchPath: ['knex', 'public'],
-    connection: process.env.PG_CONNECTION_STRING ? process.env.PG_CONNECTION_STRING : 'postgres://example:example@localhost:5432/test'
   });
 
 
 // GET all API's 
+
 app.get('/apis', (req, res) => {
    res.status(200).send()
 });
@@ -94,6 +95,16 @@ you should use JSON.stringify() to convert your value to a string prior to passi
     .update({json_data: JSON.stringify(mightBeAnArray)});
 */
 
+/*
+    Checks the database and it's tables. In case an 'api' table does not exist, it creates a new table that follows the knex schema. 
+    This knex schema contains; 
+        - an increment: int
+        - an uuid: uuid
+        - a name: String
+        - properties: json
+        - endpoints: json
+        - timestamps: Timestamps
+*/
 
 async function initialiseTables() {
   await pg.schema.hasTable('api').then(async (exists) => {
@@ -112,6 +123,9 @@ async function initialiseTables() {
         .then(async () => {
           console.log('created table: APIS');
         });
+
+    } else {
+        console.log('API table already exists')
     }
   });
 }
