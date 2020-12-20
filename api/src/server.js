@@ -2,7 +2,9 @@ const express = require('express');
 const http = require('http');
 const bodyparser = require('body-parser')
 const app = express();
-const fetch = require('node-fetch')
+const fetch = require('node-fetch');
+const { json } = require('body-parser');
+const {v4: uuidv4} = require('uuid')
 
 
 const pg = require('knex')({
@@ -12,7 +14,9 @@ const pg = require('knex')({
     searchPath: ['knex', 'public'],
   });
 
-
+// Middelware
+app.use(bodyparser.json())
+app.use(bodyparser.urlencoded({extented: true}))
 // GET all API's 
 
 app.get('/apis', (req, res) => {
@@ -44,15 +48,34 @@ app.get('apis/:uuid', async (req, res) => {
 */
 app.post('/apis' , (req, res) => {
 
-    const newAPI = {
-        api_name: req.body.name,
-        api_url: req.body.url,
-        allowed_endpoints: req.body.permissions,
-        description: req.body.description
+    if(req.body != undefined) {
+        const newAPI = {
+            api_name: req.body.api_name,
+            api_url: req.body.api_url,
+            allowed_endpoints: req.body. allowed_endpoints,
+            description: req.body.description
+        }
+        insertAPI(newAPI);
+        res.status(200).send({
+            "status": 200,
+            "message": "Record added!",
+            "api": newAPI
+        })
+    } else {
+       res.status(400).send("Invalid body recieved")
     }
-
-
+   
 })
+
+async function insertAPI(data){
+    await pg('api').insert({
+        uuid: uuidv4(),
+        api_name: data.api_name,
+        api_url: data.api_url,
+        endpoints: {"endpoints":data.allowed_endpoints},
+        description: data.description
+    })
+}
 
 // DELETE request of an API
 app.delete('/apis/:uuid', (req, res) => {
@@ -114,7 +137,7 @@ async function initialiseTables() {
           table.increments();
           table.uuid('uuid');
           table.string('api_name');
-          table.string('api_link');
+          table.string('api_url');
           table.string('description');
           table.json('properties')
           table.json('endpoints')
@@ -130,6 +153,13 @@ async function initialiseTables() {
   });
 }
 
+
+/* 
+    ResetTables function resets the table in case a column has been changed, added or removed. 
+*/
+async function resetTables(){
+    await pg.schema.dropTableIfExists('api');
+}
 initialiseTables()
 
 module.exports = app;
