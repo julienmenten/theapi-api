@@ -96,6 +96,8 @@ async function insertAPI(data){
         properties: {},
         endpoints: {"endpoints":data.allowed_endpoints},
         description: data.description
+    }).returning('*').then(newData => {
+        console.log(`New API added! Welcome ${newData[0].api_name}`)
     })
 }
 
@@ -103,8 +105,11 @@ async function insertAPI(data){
 app.delete('/apis/:uuid', async (req, res) => {
     const uuid = req.params.uuid
     try {
-        await pg('api').where({uuid: uuid}).del()
-        res.status(200).send("API deleted from Database")
+        await pg('api').where({uuid: uuid}).del().returning('*').then(data => {
+            console.log(`API deleted! Goodbye`)
+            res.status(200).send()
+        })
+        
     }catch(e){
         console.log(e)
         res.status(400).send("An unknown error has occured")
@@ -112,8 +117,16 @@ app.delete('/apis/:uuid', async (req, res) => {
     
 })
 
-// UPDATE request of an API
- 
+// PATCH request of an API
+// TODO: Secure the endpoint so that you get error messages 
+ app.patch('/apis/:uuid', async (req, res) => {
+    const uuid = req.params.uuid;
+    const newBody = req.body
+    pg('api').where({uuid: uuid}).update(newBody).returning('*').then(data => {
+        console.log(data)
+        res.status(200).send()
+    })
+ })
 
 /* Fetch the info of the new API 
     Accepts: 
