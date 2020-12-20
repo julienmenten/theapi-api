@@ -32,15 +32,23 @@ app.get('/apis', async (req, res) => {
 
 
 // FIND ONE API 
-app.get('/apis?id=', async (req, res) => {
-    const uuid = req.query.uuid;
+app.get('/apis/:id', async (req, res) => {
+    console.log
+    const uuid = req.params.id;
+
     const result = await pg('api')
         .select('*')
-        .where({uuid: uuid});
-    console.log(result)
-    res.status(200).send(json({
-        res: result
-    }));
+        .where({uuid: uuid})
+
+
+    if(result.length >= 1) {
+        res.status(200).send({
+            result: result
+        });
+    }else {
+        res.status(400).send("API not found")
+    }
+    
 });
 
 
@@ -92,8 +100,16 @@ async function insertAPI(data){
 }
 
 // DELETE request of an API
-app.delete('/apis/:uuid', (req, res) => {
-
+app.delete('/apis/:uuid', async (req, res) => {
+    const uuid = req.params.uuid
+    try {
+        await pg('api').where('uuid', uuid).del().then(console.log("Record deleted"))
+        res.status(200).send()
+    }catch(e){
+        console.log(e)
+        res.status(400).send()
+    }
+    
 })
 
 // UPDATE request of an API
