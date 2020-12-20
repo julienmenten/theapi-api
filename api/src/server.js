@@ -17,17 +17,24 @@ const pg = require('knex')({
 // Middelware
 app.use(bodyparser.json())
 app.use(bodyparser.urlencoded({extented: true}))
-// GET all API's 
 
-app.get('/apis', (req, res) => {
-   res.status(200).send()
+
+// GET all API's 
+app.get('/apis', async (req, res) => {
+    let apiList = []
+    await pg('api').select('*').then( apis => {
+        apis.forEach( api => {
+            apiList.push(api)
+        })
+    })
+    res.status(200).send(apiList)
 });
 
+
 // FIND ONE API 
-app.get('apis/:uuid', async (req, res) => {
-
+app.get('api/:uuid', async (req, res) => {
     const uuid = req.params.uuid;
-
+    console.log(uuid)
     const result = await pg
         .select(['uuid', 'api_name', 'created_at'])
         .from('api')
@@ -50,28 +57,37 @@ app.post('/apis' , (req, res) => {
 
     if(req.body != undefined) {
         const newAPI = {
+            uuid: uuidv4(),
             api_name: req.body.api_name,
             api_url: req.body.api_url,
             allowed_endpoints: req.body. allowed_endpoints,
             description: req.body.description
         }
+
         insertAPI(newAPI);
         res.status(200).send({
             "status": 200,
             "message": "Record added!",
+            "id": newAPI.uuid,
             "api": newAPI
         })
     } else {
-       res.status(400).send("Invalid body recieved")
+       res.status(400).send("Invalid body received")
     }
    
 })
+/*
+    InsertAPI() function accepts an object with data comming from the POST request and inserts the new API record to the database.
+    This function also searches for the properties from the API makes a readable JSON format to put in the database. 
 
+    TODO: READ THE API AND FORMAT THE PROPERTIES IN A JSON FORMAT THAT IS READABLE FOR FRONT END USE.
+*/ 
 async function insertAPI(data){
     await pg('api').insert({
-        uuid: uuidv4(),
+        uuid: data.uuid,
         api_name: data.api_name,
         api_url: data.api_url,
+        properties: {},
         endpoints: {"endpoints":data.allowed_endpoints},
         description: data.description
     })
@@ -89,23 +105,22 @@ app.delete('/apis/:uuid', (req, res) => {
     Accepts: 
         URL: string
 */
-
 async function fetchNewAPIData(URL) {
     try{
         await fetch(URL, {method: 'GET'})
         .then(res => {
             let apiContent = res.json();
+            console.log(apiContent)
             return  apiContent;
-        })
-        .then(json => {
-            console.log(json)
         })
     }catch(e){
         console.log(e)
     }
-   
 }
 
+function formatProperties(){
+
+}
 // Initializing the API table
 
 /*
