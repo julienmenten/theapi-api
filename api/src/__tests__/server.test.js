@@ -27,7 +27,12 @@ describe(' Fetch the data of an API submitted by the user', () => {
 
 describe('Create and POST a new API in the database, then remove that entry', () => {
     test('POST a new record to the DB', async (done) => {
-
+        const TEST_API = {
+            api_url: "https://jsonplaceholder.typicode.com/todos/1",
+            api_name: "JSON placeholder test API",
+            allowed_endpoints: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+            description: "Free to use fake online REST API for testing and prototyping."
+        }
     })
 
     test('GET that record from the DB', async (done) => {
