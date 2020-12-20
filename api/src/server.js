@@ -134,10 +134,13 @@ PATCH /apis/:uuid
  app.patch('/apis/:uuid', async (req, res) => {
     const uuid = req.params.uuid;
     const newBody = req.body
-    pg('api').where({uuid: uuid}).update(newBody).returning('*').then(data => {
-        console.log(data)
-        res.status(200).send()
-    })
+    try{    
+        await pg('api').where({uuid: uuid}).update(newBody).returning('*').then(data => {
+            res.status(200).send()
+        })
+    }  catch(e) {
+        res.status(400).send()
+    }
  })
 
 /*
@@ -177,7 +180,7 @@ This list is then returned as an array containing objects.
     
 */
 function formatProperties(data){
-    
+
 }
 
 /*

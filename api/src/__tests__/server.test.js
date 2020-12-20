@@ -4,44 +4,48 @@ const supertest = require('supertest');
 const app = require('../server');
 
 const request = supertest(app)
+
+ // Variables
 let UUID = "";
+const TEST_API = {
+    api_url: "https://jsonplaceholder.typicode.com/todos/1",
+    api_name: "JSON placeholder test API",
+    allowed_endpoints: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    description: "Free to use fake online REST API for testing and prototyping."
+}
 
 describe(' GET /api', ()=> {
     test('responds with 200', async (done) => {
          const response = await request.get('/apis')
-         expect(response.status).toBe(200, done())
-       
+         expect(response.status).toBe(200)
+         done()
     })
 })
 
 describe('Create and POST a new API in the database, then remove that entry', () => {
-    // Variables
-   
-
-    const TEST_API = {
-        api_url: "https://jsonplaceholder.typicode.com/todos/1",
-        api_name: "JSON placeholder test API",
-        allowed_endpoints: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-        description: "Free to use fake online REST API for testing and prototyping."
-    }
 
     test('POST a new entry to the DB', async (done) => {
         const response = await request.post('/apis').send(TEST_API)
         UUID = response.body.id
        
-        expect(response.status).toBe(200, done())
+        expect(response.status).toBe(200)
+        done()
     })
 
     test('GET the new entry from the DB', async (done) => {
         const response = await request.get(`/apis/${UUID}`)
-        expect(response.status).toBe(200, done())
+        expect(response.status).toBe(200)
+        done()
     })
 
-    /*test('UPDATE the name of the entry', async (done) => {
+    test('UPDATE the name of the entry', async (done) => {
         const response = await request.patch(`/apis/${UUID}`)
-            .send()
-        expect(response.status).toBe(200, done())
-    })*/
+            .send({
+                api_name: "Test PATCH"
+            })
+        expect(response.status).toBe(200)
+        done()
+    })
 
    
 })
@@ -63,6 +67,7 @@ describe('GET /apis/:id', () => {
 
         const response = await request.get(`/apis/${fakeId}`)
         expect(response.status).not.toBe(200)
-        expect(response.text).toBe("API not found", done());
+        expect(response.text).toBe("API not found");
+        done()
     });
 })
