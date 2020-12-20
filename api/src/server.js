@@ -103,11 +103,11 @@ async function insertAPI(data){
 app.delete('/apis/:uuid', async (req, res) => {
     const uuid = req.params.uuid
     try {
-        await pg('api').where('uuid', uuid).del().then(console.log("Record deleted"))
-        res.status(200).send()
+        await pg('api').where({uuid: uuid}).del()
+        res.status(200).send("API deleted from Database")
     }catch(e){
         console.log(e)
-        res.status(400).send()
+        res.status(400).send("An unknown error has occured")
     }
     
 })

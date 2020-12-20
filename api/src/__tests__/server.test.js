@@ -1,8 +1,10 @@
+const e = require('express');
 const Server  = require('http');
 const supertest = require('supertest');
 const app = require('../server');
 
 const request = supertest(app)
+let UUID = "";
 
 describe(' GET /api', ()=> {
     test('responds with 200', async (done) => {
@@ -13,16 +15,17 @@ describe(' GET /api', ()=> {
 })
 
 describe('Create and POST a new API in the database, then remove that entry', () => {
+    // Variables
+   
 
-    let UUID = "";
+    const TEST_API = {
+        api_url: "https://jsonplaceholder.typicode.com/todos/1",
+        api_name: "JSON placeholder test API",
+        allowed_endpoints: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+        description: "Free to use fake online REST API for testing and prototyping."
+    }
+
     test('POST a new entry to the DB', async (done) => {
-        const TEST_API = {
-            api_url: "https://jsonplaceholder.typicode.com/todos/1",
-            api_name: "JSON placeholder test API",
-            allowed_endpoints: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-            description: "Free to use fake online REST API for testing and prototyping."
-        }
-
         const response = await request.post('/apis').send(TEST_API)
         UUID = response.body.id
        
@@ -30,22 +33,36 @@ describe('Create and POST a new API in the database, then remove that entry', ()
     })
 
     test('GET the new entry from the DB', async (done) => {
-        const response = await request.get(`/apis?id=${UUID}`)
-        expect(response.status).toBe(200, done())
-    })
-
-    test('UPDATE the name of the entry', async (done) => {
-        const response = await request.patch(`/apis/${UUID}`)
-        expect(response.status).toBe(200, done())
-    })
-
-    test('GET the updated entry from the DB', async (done) => {
         const response = await request.get(`/apis/${UUID}`)
         expect(response.status).toBe(200, done())
     })
 
+    /*test('UPDATE the name of the entry', async (done) => {
+        const response = await request.patch(`/apis/${UUID}`)
+            .send()
+        expect(response.status).toBe(200, done())
+    })*/
+
+   
+})
+
+
+describe('DELETE /apis/:id', () => {
     test('DELETE the entry', async (done) => {
         const response = await request.delete(`/apis/${UUID}`)
         expect(response.status).toBe(200, done())
     })
+    
+});
+
+
+describe('GET /apis/:id', () => {
+    it('should return "API not found" when an incorrect id has been provided', async (done) => {
+
+        const fakeId = "b596d3f5-c83e-4402-a54a-756fc7f7efe1"
+
+        const response = await request.get(`/apis/${fakeId}`)
+        expect(response.status).not.toBe(200)
+        expect(response.text).toBe("API not found", done());
+    });
 })
