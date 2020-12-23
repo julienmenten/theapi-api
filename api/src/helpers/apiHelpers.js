@@ -46,14 +46,22 @@ This list is then returned as an array containing objects.
         data: 1 result object from the fetched API 
 
     Output:   
-        attribute: {
+        properties: {
             attribute_name: String
             attribute_type: String
         }[]
     
 */
     formatProperties(data){
-
+        let properties = Object.keys(data)
+        let newProperties = [];
+        properties.forEach(prop => {
+            newProperties.push({
+                attribute_name: prop
+            })
+        })
+        console.log(newProperties)
+        return properties;
     },
  
 }
