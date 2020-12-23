@@ -1,5 +1,4 @@
 const fetch = require('node-fetch');
-const { json } = require('body-parser');
    /*
  =================================================================
         FUNCTIONS MANIPULATING DATA
@@ -11,7 +10,7 @@ Fetches the API provided at POST and uses that data to find the
     Input: 
         URL: string
 
-   
+This either returns the whole JSON object, or the first entry from the fetched data   
 */
     async fetchNewAPIData(URL) {
         let result 
@@ -19,12 +18,18 @@ Fetches the API provided at POST and uses that data to find the
             await fetch(URL)
             .then(async data => {
                 content = await data.json()
-
-                return {
-                // TODO: Check if the content of the API is an array or a simple JSON
-                   content: content,
-                   status: data.status
+                if(this.detectIsArray(content)){
+                    return {
+                           content: content[0],
+                           status: data.status
+                        }
+                }else {
+                    return {    
+                           content: content,
+                           status: data.status
+                        }
                 }
+               
             })
             .then(res => {
                 let contentString = JSON.stringify(res.content)
@@ -53,16 +58,66 @@ This list is then returned as an array containing objects.
     
 */
     formatProperties(data){
-        let properties = Object.keys(data)
-        let newProperties = [];
+        let properties = Object.keys(data);
+        let test = Object.values(data)
+        let formattedProperties = [];
+
         properties.forEach(prop => {
-            newProperties.push({
-                attribute_name: prop
+            formattedProperties.push({
+                attribute_name: prop,
+                attribute_type: this.getPropertyType(test[properties.indexOf(prop)])
             })
         })
-        console.log(newProperties)
-        return properties;
+        return formattedProperties;
     },
+
+/*
+This function analyzes 1 property and returns it's type. 
+    Input: 
+        prop: any
+    Output: 
+        propType: String
+
+    TODO: Add more possible outputs
+*/
+    getPropertyType(prop) {
+
+        let propType = null
+        switch (typeof prop) {
+            case 'string':
+                propType = "String"
+                break;
+            case 'number':
+                propType = "Number"
+                break;
+            case 'boolean':
+                propType = "Array"
+                break;
+            case 'object':
+                propType = "Object"
+                break;
+            default:
+                propType = "Undefined"
+                break;
+        }
+        return propType;
+    },
+
+/*
+This function checks if the input is either an array or an object of any kind. Returns boolean.
+    Input:
+        data: object or array
+    Output: 
+        boolean
+*/
+    detectIsArray(data) {
+        if(Array.isArray(data)) {
+            return true
+        }
+        else {
+            return false
+        }
+    }
  
 }
 

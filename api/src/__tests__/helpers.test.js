@@ -26,7 +26,7 @@ describe("Test the ability to analyze a JSON file and it's properties and their 
     }
     test("Read the properties of an object", async done => {
         expect(apiHelpers.formatProperties(testUser)).toEqual(
-            expect.arrayContaining(['name', 'age', 'hobbies'])
+            expect.arrayContaining([{attribute_name:'name', attributye_type: 'String'}, {attribute_name:'age', attributye_type: 'Number'}, {attribute_name:'hobbies', attributye_type: "Object"}])
         )
         expect(apiHelpers.formatProperties(testUser)).not.toEqual(
             expect.arrayContaining(['username', 'birthday', 'hobbies'])
@@ -35,8 +35,9 @@ describe("Test the ability to analyze a JSON file and it's properties and their 
     })
 
     test("Analyzes the properties of an object and returns the type of the property", async done => {
-
-
+        expect(apiHelpers.formatProperties(testUser)).toEqual(
+            expect.arrayContaining([{attribute_name:'name', attributye_type: 'String'}, {attribute_name:'age', attributye_type: 'Number'}, {attribute_name:'hobbies', attributye_type: 'Object'}])
+        )
         done()
     })
 
@@ -47,3 +48,20 @@ describe("Test the ability to analyze a JSON file and it's properties and their 
     })
 })
 
+describe("Test if the requested API returns an Array of results, or only a simple JSON" , () => { 
+    const TestArray = [1, 2, 3]
+    const TestJSON = {
+        "username": "John Doe",
+        "age": 24
+    }
+    it("should return 'false' in case it is not an array", (done) => {
+        expect(apiHelpers.detectIsArray(TestJSON)).not.toBeTruthy()
+        expect(apiHelpers.detectIsArray(TestJSON)).toBeFalsy()
+        done()
+    })
+
+    it("Should return 'true' when the inut is an array", (done) => {
+        expect(apiHelpers.detectIsArray(TestArray)).toBeTruthy()
+        done()
+    })
+})
