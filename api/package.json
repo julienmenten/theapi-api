@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon src/index.js",
-    "test": "jest --verbose --detectOpenHandles --coverage"
+    "test": "jest --verbose --detectOpenHandles --coverage --watch --runInBand"
   },
   "repository": {
     "type": "git",

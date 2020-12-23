@@ -10,20 +10,34 @@ const ApiHelpers = {
 Fetches the API provided at POST and uses that data to find the 
     Input: 
         URL: string
+
+   
 */
     async fetchNewAPIData(URL) {
+        let result 
         try{
-            await fetch(URL, {method: 'GET'})
-            .then(res => {
-                let apiContent = res.json();
+            await fetch(URL)
+            .then(async data => {
+                content = await data.json()
+
                 return {
-                    "status": res.status,
-                    "content": res
-                };
+                // TODO: Check if the content of the API is an array or a simple JSON
+                   content: content,
+                   status: data.status
+                }
             })
+            .then(res => {
+                let contentString = JSON.stringify(res.content)
+                return result = {
+                    content: contentString,
+                    status: res.status
+                }
+            })
+          
         }catch(e){
-            console.log(e)
+            console.error(e)
         }
+        return result
     },
 /* 
 Analyzes an api and its attributes. Then creates a list from the attributes it found and their type. 

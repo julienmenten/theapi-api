@@ -77,17 +77,17 @@ POST /apis
     
     TODO: Add security in case the request does not have the required inputs
 */
-app.post('/apis' , (req, res) => {
+app.post('/apis' , async (req, res) => {
 
     if(req.body != undefined) {
-        let newProperties = ApiHelpers.fetchNewAPIData(req.body.apu_url)
-        console.log(newProperties)
+        let newProperties = await ApiHelpers.fetchNewAPIData(req.body.api_url)
+        
         const newAPI = {
             uuid: uuidv4(),
             api_name: req.body.api_name,
             api_url: req.body.api_url,
-            properties: newProperties,
-            allowed_endpoints: req.body. allowed_endpoints,
+            properties: newProperties.content,
+            allowed_endpoints: req.body.allowed_endpoints,
             description: req.body.description
         }
         
