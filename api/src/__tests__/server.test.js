@@ -15,7 +15,7 @@ const TEST_API = {
 }
 
 describe(' GET /api', ()=> {
-    test('responds with 200', async (done) => {
+    test('responds with 200', async done => {
          const response = await request.get('/apis')
          expect(response.status).toBe(200)
          done()
@@ -24,7 +24,7 @@ describe(' GET /api', ()=> {
 
 describe('Create and POST a new API in the database, then remove that entry', () => {
 
-    test('POST a new entry to the DB', async (done) => {
+    test('POST a new entry to the DB', async done => {
         const response = await request.post('/apis').send(TEST_API)
         UUID = response.body.id
        
@@ -32,13 +32,13 @@ describe('Create and POST a new API in the database, then remove that entry', ()
         done()
     })
 
-    test('GET the new entry from the DB', async (done) => {
+    test('GET the new entry from the DB', async done => {
         const response = await request.get(`/apis/${UUID}`)
         expect(response.status).toBe(200)
         done()
     })
 
-    test('UPDATE the name of the entry', async (done) => {
+    test('UPDATE the name of the entry', async done => {
         const response = await request.patch(`/apis/${UUID}`)
             .send({
                 api_name: "Test PATCH"
@@ -52,16 +52,17 @@ describe('Create and POST a new API in the database, then remove that entry', ()
 
 
 describe('DELETE /apis/:id', () => {
-    test('DELETE the entry', async (done) => {
+    test('DELETE the entry', async done => {
         const response = await request.delete(`/apis/${UUID}`)
-        expect(response.status).toBe(200, done())
+        expect(response.status).toBe(200)
+        done()
     })
     
 });
 
 
 describe('GET /apis/:id', () => {
-    it('should return "API not found" when an incorrect id has been provided', async (done) => {
+    it('should return "API not found" when an incorrect id has been provided', async done => {
 
         const fakeId = "b596d3f5-c83e-4402-a54a-756fc7f7efe1"
 
