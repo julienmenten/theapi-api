@@ -2,19 +2,20 @@ const express = require('express');
 const http = require('http');
 const bodyparser = require('body-parser')
 const app = express();
-const fetch = require('node-fetch');
 const { json } = require('body-parser');
 const {v4: uuidv4} = require('uuid')
-
+const DatabaseHelper = require('./helpers/DatabaseHelper');
+const ApiHelpers = require('./helpers/apiHelpers');
 /*
  */
-
 const pg = require('knex')({
     client: 'pg',
     version: '9.6',      
     connection: 'postgres://julien:admin12345@localhost:5432/thegreatapi',
     searchPath: ['knex', 'public'],
   });
+
+
 
 // Middelware
 app.use(bodyparser.json())
@@ -76,18 +77,21 @@ POST /apis
     
     TODO: Add security in case the request does not have the required inputs
 */
-app.post('/apis' , (req, res) => {
+app.post('/apis' , async (req, res) => {
 
     if(req.body != undefined) {
+        let newProperties = await ApiHelpers.fetchNewAPIData(req.body.api_url)
+        
         const newAPI = {
             uuid: uuidv4(),
             api_name: req.body.api_name,
             api_url: req.body.api_url,
-            allowed_endpoints: req.body. allowed_endpoints,
+            properties: newProperties.content,
+            allowed_endpoints: req.body.allowed_endpoints,
             description: req.body.description
         }
-
-        insertAPI(newAPI);
+        
+        DatabaseHelper.insertAPI(newAPI);
         res.status(200).send({
             "status": 200,
             "message": "Record added!",
@@ -131,138 +135,27 @@ PATCH /apis/:uuid
         TODO: Secure the endpoint so that you get error messages 
 */
 
- app.patch('/apis/:uuid', async (req, res) => {
+app.patch('/apis/:uuid', async (req, res) => {
     const uuid = req.params.uuid;
     const newBody = req.body
-    pg('api').where({uuid: uuid}).update(newBody).returning('*').then(data => {
-        console.log(data)
-        res.status(200).send()
-    })
- })
-
-/*
- =================================================================
-        FUNCTIONS MANIPULATING DATA
- =================================================================
-*/
-
-/* 
-Fetches the API provided at POST and uses that data to find the 
-    Input: 
-        URL: string
-*/
-async function fetchNewAPIData(URL) {
-    try{
-        await fetch(URL, {method: 'GET'})
-        .then(res => {
-            let apiContent = res.json();
-            console.log(apiContent)
-            return  apiContent;
+    try{    
+        await pg('api').where({uuid: uuid}).update(newBody).returning('*').then(data => {
+            res.status(200).send()
         })
-    }catch(e){
-        console.log(e)
+    }  catch(e) {
+        res.status(400).send()
     }
-}
-/* 
-Analyzes a record and its attributes. Then creates a list from the attributes it found and their type. 
-This list is then returned as an array containing objects. 
-    Input: 
-        data: 1 result object from the fetched API 
-
-    Output:   
-        attribute: {
-            attribute_name: String
-            attribute_type: String
-        }[]
-    
-*/
-function formatProperties(data){
-    
-}
-
-/*
-    InsertAPI() function accepts an object with data comming from the POST request and inserts the new API record to the database.
-    This function also searches for the properties from the API makes a readable JSON format to put in the database. 
-
-    TODO: READ THE API AND FORMAT THE PROPERTIES IN A JSON FORMAT THAT IS READABLE FOR FRONT END USE.
-*/ 
-async function insertAPI(data){
-    await pg('api').insert({
-        uuid: data.uuid,
-        api_name: data.api_name,
-        api_url: data.api_url,
-        properties: {},
-        endpoints: {"endpoints":data.allowed_endpoints},
-        description: data.description
-    }).returning('*').then(newData => {
-        console.log(`New API added! Welcome ${newData[0].api_name}`)
-    })
-}
-
-/*
- =================================================================
-        FUNCTIONS MANIPULATING THE DATABASE
- =================================================================
-*/
-/*
-For PostgreSQL, due to incompatibility between native array and json types, 
-when setting an array (or a value that could be an array) as the value of a json or jsonb column, 
-you should use JSON.stringify() to convert your value to a string prior to passing it to the query builder, e.g.
-
-    knex.table('users')
-    .where({id: 1})
-    .update({json_data: JSON.stringify(mightBeAnArray)});
-*/
-
-/*
-    Checks the database and it's tables. In case an 'api' table does not exist, it creates a new table that follows the knex schema. 
-    This knex schema contains; 
-        - id (increment): int
-        - uuid: uuid
-        - api_name: String
-        - api_url: String
-        - description: String
-        - properties: String[]
-        - endpoints: json
-        - timestamps: Timestamps
-*/
-
-async function initialiseTables() {
-  await pg.schema.hasTable('api').then(async (exists) => {
-    if (!exists) {
-      await pg.schema
-        .createTable('api', (table) => {
-          table.increments();
-          table.uuid('uuid');
-          table.string('api_name');
-          table.string('api_url');
-          table.string('description');
-          table.json('properties')
-          table.json('endpoints')
-          table.timestamps(true, true);
-        })
-        .then(async () => {
-          console.log('created table: APIS');
-        });
-
-    } else {
-        console.log('API table already exists')
-    }
-  });
-}
+})
 
 
-/* 
-    ResetTables function resets the table in case a column has been changed, added or removed. 
-    ! ONLY USE WHEN A RESET OF THE TABLE IS NEEDED
-*/
-async function resetTables(){
-    await pg.schema.dropTableIfExists('api');
-}
+app.get('/teapot', (req, res) => {
+    res.status(418).send()
+})
+
 
 /*
     Table functions
 */
-initialiseTables()
+DatabaseHelper.initialiseTables()
 
 module.exports = app;
