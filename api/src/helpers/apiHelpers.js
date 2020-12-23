@@ -17,24 +17,27 @@ This either returns the whole JSON object, or the first entry from the fetched d
         try{
             await fetch(URL)
             .then(async data => {
-                content = await data.json()
+                let content = await data.json()
+                
                 if(this.detectIsArray(content)){
-                    return {
-                           content: content[0],
+                    let firstOfArray = content[0]
+                    console.log(firstOfArray)
+                    return{
+                           properties: firstOfArray,
                            status: data.status
                         }
                 }else {
                     return {    
-                           content: content,
-                           status: data.status
+                            properties: content,
+                            status: data.status
                         }
                 }
                
             })
             .then(res => {
-                let contentString = JSON.stringify(res.content)
+                let contentString = JSON.stringify(res.properties)
                 return result = {
-                    content: contentString,
+                    properties: contentString,
                     status: res.status
                 }
             })
@@ -58,17 +61,22 @@ This list is then returned as an array containing objects.
     
 */
     formatProperties(data){
-        let properties = Object.keys(data);
-        let test = Object.values(data)
-        let formattedProperties = [];
+        if(!undefined) {
+            let properties = Object.keys(data);
+            let test = Object.values(data)
+            let formattedProperties = [];
 
-        properties.forEach(prop => {
-            formattedProperties.push({
-                attribute_name: prop,
-                attribute_type: this.getPropertyType(test[properties.indexOf(prop)])
+            properties.forEach(prop => {
+                formattedProperties.push({
+                    attribute_name: prop,
+                    attribute_type: this.getPropertyType(test[properties.indexOf(prop)])
+                })
             })
-        })
-        return formattedProperties;
+            return formattedProperties;
+        }else {
+            return "error" 
+        }
+        
     },
 
 /*

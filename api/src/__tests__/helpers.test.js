@@ -10,7 +10,7 @@ describe('Test if we can fetch data from a random API online', () => {
         expect(api)
         .toStrictEqual(
             expect.objectContaining({
-                content: expect.any(String),
+                properties: expect.any(String),
                 status: expect.any(Number)
             })
         )

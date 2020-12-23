@@ -30,7 +30,7 @@ app.use(bodyparser.urlencoded({extented: true}))
 GET /apis
   Gets all the records from the 'api' Database
 
-  TODO (optional): Add pagination
+  TODO (optional): Add pagination: https://medium.com/learnfactory-nigeria/create-a-pagination-middleware-with-node-js-fe4ec5dca80f
 */
 app.get('/apis', async (req, res) => {
     let apiList = []
@@ -80,13 +80,13 @@ POST /apis
 app.post('/apis' , async (req, res) => {
 
     if(req.body != undefined) {
-        let newProperties = await ApiHelpers.fetchNewAPIData(req.body.api_url)
-        
+        let api_properties = await ApiHelpers.fetchNewAPIData(req.body.api_url);
+        let formattedProperties = ApiHelpers.formatProperties(JSON.parse(api_properties.properties));
         const newAPI = {
             uuid: uuidv4(),
             api_name: req.body.api_name,
             api_url: req.body.api_url,
-            properties: newProperties.content,
+            properties: formattedProperties,
             allowed_endpoints: req.body.allowed_endpoints,
             description: req.body.description
         }
