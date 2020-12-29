@@ -131,32 +131,31 @@ const ApiHelpers = {
     paginate function takes the data model and returns a paginated version with the set limit that is passed through the url of the GET request.
     Used as middleware for the GET /apis request
     */
-    paginate(data) {
-        return (req, res, next) => {
-            let currentPage = parseInt(req.query.page);
-            let resultLimit = parseInt(req.query.limit);
-            let start = (currentPage - 1) * resultLimit;
-            let end = currentPage * resultLimit;
+    paginate(data, page, limit) {
+        let currentPage = parseInt(page);
+        let resultLimit = parseInt(limit);
+        let start = (currentPage - 1) * resultLimit;
+        let end = currentPage * resultLimit;
 
-            let result = {};
+        let result = {};
 
-            if (end < data.length) {
-                result.nextPage = {
-                    page: currentPage + 1,
-                    limit: resultLimit
-                }
-
-            }else if (start > 0) {
-                result.previousPage = {
-                    page: currentPage - 1,
-                    limit: resultLimit
-                }
+        if (end < data.length) {
+            result.nextPage = {
+                page: currentPage + 1,
+                limit: resultLimit
             }
-            
-            result.results = data.slice(start, end);
-            res.paginatedResult = result;
-            next()
-        };
+        }
+        if (start > 0) {
+            result.previousPage = {
+                page: currentPage - 1,
+                limit: resultLimit
+            }
+        }
+        
+        result.results = data.slice(start, end);
+        paginatedResult = result;
+
+        return paginatedResult
     }
 }
 
