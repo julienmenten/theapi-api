@@ -22,7 +22,7 @@ describe(' GET /api', ()=> {
     })
 })
 
-describe('Create and POST a new API in the database, then remove that entry', () => {
+describe('Create and POST a new API in the database, then updates the name', () => {
 
     test('POST a new entry to the DB', async done => {
         const response = await request.post('/apis').send(TEST_API)
