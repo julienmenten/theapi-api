@@ -7,10 +7,7 @@
 ## Environment and testing
 
 ## Roadmap 
-- `GET` all saved API's 
-- `POST` create a new API entry
-- Save the API with attributes and datatypes in the API object
-- Save the endpoints in the API object
+- Clean up and fix the docker implementation
 
 ## Vision
 

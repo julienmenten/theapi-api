@@ -68,13 +68,14 @@ const DatabaseHelper = {
             uuid: data.uuid,
             api_name: data.api_name,
             api_url: data.api_url,
-            properties: {},
+            properties: {"properties":data.properties},
             endpoints: {"endpoints":data.allowed_endpoints},
             description: data.description
         }).returning('*').then(newData => {
             console.log(`New API added! Welcome ${newData[0].api_name}`)
         })
-    }
+    },
+    
 }
 
 module.exports = DatabaseHelper, pg;
