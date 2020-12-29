@@ -75,22 +75,7 @@ const DatabaseHelper = {
             console.log(`New API added! Welcome ${newData[0].api_name}`)
         })
     },
-    /*
-    paginate function takes the data model and returns a paginated version with the set limit that is passed through the url of the GET request.
-    Used as middleware for the GET /apis request
-    */
-    paginate(model) {
-        return (req, res, next) => {
-            let currentPage = parseInt(req.query.page);
-            let resultLimit = parseInt(req.query.limit);
-            let start = (currentPage - 1) * resultLimit;
-            let end = currentPage * resultLimit;
-
-            let result = {};
-
-            next()
-        };
-    }
+    
 }
 
 module.exports = DatabaseHelper, pg;

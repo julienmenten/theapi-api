@@ -5,13 +5,13 @@ const fetch = require('node-fetch');
  =================================================================
 */
 const ApiHelpers = {
-/* 
-Fetches the API provided at POST and uses that data to find the 
-    Input: 
-        URL: string
+    /* 
+    Fetches the API provided at POST and uses that data to find the 
+        Input: 
+            URL: string
 
-This either returns the whole JSON object, or the first entry from the fetched data   
-*/
+    This either returns the whole JSON object, or the first entry from the fetched data   
+    */
     async fetchNewAPIData(URL) {
         let result 
         try{
@@ -47,19 +47,19 @@ This either returns the whole JSON object, or the first entry from the fetched d
         }
         return result
     },
-/* 
-Analyzes an api and its attributes. Then creates a list from the attributes it found and their type. 
-This list is then returned as an array containing objects. 
-    Input: 
-        data: 1 result object from the fetched API 
+    /* 
+    Analyzes an api and its attributes. Then creates a list from the attributes it found and their type. 
+    This list is then returned as an array containing objects. 
+        Input: 
+            data: 1 result object from the fetched API 
 
-    Output:   
-        properties: {
-            attribute_name: String
-            attribute_type: String
-        }[]
-    
-*/
+        Output:   
+            properties: {
+                attribute_name: String
+                attribute_type: String
+            }[]
+        
+    */
     formatProperties(data){
         if(!undefined) {
             let properties = Object.keys(data);
@@ -79,15 +79,15 @@ This list is then returned as an array containing objects.
         
     },
 
-/*
-This function analyzes 1 property and returns it's type. 
-    Input: 
-        prop: any
-    Output: 
-        propType: String
+    /*
+    This function analyzes 1 property and returns it's type. 
+        Input: 
+            prop: any
+        Output: 
+            propType: String
 
-    TODO: Add more possible outputs
-*/
+        TODO: Add more possible outputs
+    */
     getPropertyType(prop) {
 
         let propType = null
@@ -111,13 +111,13 @@ This function analyzes 1 property and returns it's type.
         return propType;
     },
 
-/*
-This function checks if the input is either an array or an object of any kind. Returns boolean.
-    Input:
-        data: object or array
-    Output: 
-        boolean
-*/
+    /*
+    This function checks if the input is either an array or an object of any kind. Returns boolean.
+        Input:
+            data: object or array
+        Output: 
+            boolean
+    */
     detectIsArray(data) {
         if(Array.isArray(data)) {
             return true
@@ -125,8 +125,39 @@ This function checks if the input is either an array or an object of any kind. R
         else {
             return false
         }
+    },
+
+    /*
+    paginate function takes the data model and returns a paginated version with the set limit that is passed through the url of the GET request.
+    Used as middleware for the GET /apis request
+    */
+    paginate(data) {
+        return (req, res, next) => {
+            let currentPage = parseInt(req.query.page);
+            let resultLimit = parseInt(req.query.limit);
+            let start = (currentPage - 1) * resultLimit;
+            let end = currentPage * resultLimit;
+
+            let result = {};
+
+            if (end < data.length) {
+                result.nextPage = {
+                    page: currentPage + 1,
+                    limit: resultLimit
+                }
+
+            }else if (start > 0) {
+                result.previousPage = {
+                    page: currentPage - 1,
+                    limit: resultLimit
+                }
+            }
+            
+            result.results = data.slice(start, end);
+            res.paginatedResult = result;
+            next()
+        };
     }
- 
 }
 
 module.exports = ApiHelpers;
