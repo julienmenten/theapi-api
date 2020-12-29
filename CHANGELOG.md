@@ -1,5 +1,8 @@
 # Changelog 
 
+## V1.1.0
+- Added Pagination to `GET /apis`
+- Solved helpers tests
 ## V1.0.0
 - Initialized project
 
