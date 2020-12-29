@@ -68,12 +68,28 @@ const DatabaseHelper = {
             uuid: data.uuid,
             api_name: data.api_name,
             api_url: data.api_url,
-            properties: {},
+            properties: {"properties":data.properties},
             endpoints: {"endpoints":data.allowed_endpoints},
             description: data.description
         }).returning('*').then(newData => {
             console.log(`New API added! Welcome ${newData[0].api_name}`)
         })
+    },
+    /*
+    paginate function takes the data model and returns a paginated version with the set limit that is passed through the url of the GET request.
+    Used as middleware for the GET /apis request
+    */
+    paginate(model) {
+        return (req, res, next) => {
+            let currentPage = parseInt(req.query.page);
+            let resultLimit = parseInt(req.query.limit);
+            let start = (currentPage - 1) * resultLimit;
+            let end = currentPage * resultLimit;
+
+            let result = {};
+
+            next()
+        };
     }
 }
 
