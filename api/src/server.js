@@ -6,6 +6,7 @@ const { json } = require('body-parser');
 const {v4: uuidv4} = require('uuid')
 const DatabaseHelper = require('./helpers/DatabaseHelper');
 const ApiHelpers = require('./helpers/apiHelpers');
+const _ = require('lodash')
 /*
  */
 const pg = require('knex')({
@@ -29,18 +30,27 @@ app.use(bodyparser.urlencoded({extented: true}))
 /*
 GET /apis
   Gets all the records from the 'api' Database
-
-  TODO (optional): Add pagination
+  Uses paginate() function from ApiHelpers to set a limit to the result and paginate the results to avoid clutter
 */
 app.get('/apis', async (req, res) => {
     let apiList = []
-    await pg('api').select('*').then( apis => {
-        apis.forEach( api => {
-            apiList.push(api)
+    try {
+            await pg('api').select('*').then( apis => {
+            apis.forEach( api => {
+                apiList.push(api)
+            })
         })
-    })
-    let paginatedResult = ApiHelpers.paginate(apiList, req.query.page, req.query.limit)
-    res.status(200).send(paginatedResult)
+        if(!(_.isEmpty(req.query))){
+            let paginatedResult = ApiHelpers.paginate(apiList, req.query.page, req.query.limit)
+            res.status(200).send(paginatedResult)
+        }
+        else {
+            res.status(200).send(apiList)
+        }
+    }
+    catch(e) {
+        res.status(400).send(e)
+    }
 });
 
 
