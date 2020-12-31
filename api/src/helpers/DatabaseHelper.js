@@ -33,9 +33,10 @@ const DatabaseHelper = {
                 table.uuid('uuid');
                 table.string('api_name');
                 table.string('api_url');
+                table.uuid('category');
                 table.string('description');
-                table.json('properties')
-                table.json('endpoints')
+                table.json('properties');
+                table.json('endpoints');
                 table.timestamps(true, true);
               }).then( (res) => {
                     console.log(res)
@@ -46,6 +47,18 @@ const DatabaseHelper = {
               console.log('API table already exists')
           }
         });
+
+        await pg.schema.hasTable('categories').then(async (exists) => {
+            if(!exists) { 
+                await pg.schema
+                .createTableIfNotExists('categories', (table) => {
+                    table.increments();
+                    table.uuid('uuid');
+                    table.string('category_name');
+                    table.timestamps(true, true);
+                })
+            }
+        })
       },
 
 
