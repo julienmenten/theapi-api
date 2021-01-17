@@ -72,3 +72,14 @@ describe('GET /apis/:id', () => {
         done()
     });
 })
+
+/*
+ - END TO END: splitsen 
+ - Zaken proberen kapot maken (foutieve input)
+ - End to end = helemaal doorloop testen
+ - Checken of alles wel is toegevoegd aan DB
+ - checken of alles wel verwijderd is
+ - Extra tabel toevoegen (properties of endpoints): testen van verwijderen
+ - Join statements
+ - Testen of mijn database wel opgestart 
+*/

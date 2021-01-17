@@ -8,6 +8,12 @@
 
 ## Roadmap 
 - Clean up and fix the docker implementation
+- Add a second database table with categories
+- Flesh out the contributing guidelines document
+- Write an end-to-end test
+
+- Git Workflow initialiseren
+
 
 ## Vision
 

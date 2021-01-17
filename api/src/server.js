@@ -53,13 +53,11 @@ app.get('/apis', async (req, res) => {
     }
 });
 
-
 /*
 GET /apis/:uuid
     Finds the API in the databse that matches the provided UUID
 */
 app.get('/apis/:id', async (req, res) => {
-    console.log
     const uuid = req.params.id;
 
     const result = await pg('api')

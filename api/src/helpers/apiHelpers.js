@@ -22,15 +22,15 @@ const ApiHelpers = {
                 if(this.detectIsArray(content)){
                     let firstOfArray = content[0]
                     console.log(firstOfArray)
-                    return{
-                           properties: firstOfArray,
-                           status: data.status
-                        }
+                    return {
+                        properties: firstOfArray,
+                        status: data.status
+                    }
                 }else {
                     return {    
-                            properties: content,
-                            status: data.status
-                        }
+                        properties: content,
+                        status: data.status
+                    }
                 }
                
             })
